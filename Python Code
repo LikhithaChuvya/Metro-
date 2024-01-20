@@ -1,0 +1,161 @@
+import heapq
+
+class Heap:
+
+    def __init__(self):
+        self.data = []
+        self.map = {}
+
+    def push(self, item):
+        heapq.heappush(self.data, item)
+        self.map[item] = len(self.data) - 1
+
+    def pop(self):
+        item = heapq.heappop(self.data)
+        del self.map[item]
+        return item
+
+    def update(self, item):
+        index = self.map[item]
+        heapq.heapify(self.data)
+        self.map[item] = len(self.data) - 1
+
+class Graph:
+
+    def __init__(self):
+        self.vertices = {}
+
+    class Vertex:
+        def __init__(self):
+            self.neighbors = {}
+
+    def add_vertex(self, name):
+        self.vertices[name] = self.Vertex()
+
+    def add_edge(self, v1, v2, weight):
+        self.vertices[v1].neighbors[v2] = weight
+        self.vertices[v2].neighbors[v1] = weight
+        
+    def display_map(self):
+        for key, vtx in self.vertices.items():
+            print(f"{key} =>")
+            for nbr, value in vtx.neighbors.items():
+                print(f"\t{nbr}\t{value}\n")
+
+    def dijkstra(self, src, dest):
+        # Dijkstra's algorithm
+        distances = {vertex: float("inf") for vertex in self.vertices}
+        distances[src] = 0
+
+        pq = [(0, src)]
+        while pq:
+            current_dist, current_vertex = heapq.heappop(pq)
+
+            if current_dist > distances[current_vertex]:
+                continue
+
+            for neighbor, weight in self.vertices[current_vertex].neighbors.items():
+                new_dist = current_dist + weight
+
+                if new_dist < distances[neighbor]:
+                    distances[neighbor] = new_dist
+                    heapq.heappush(pq, (new_dist, neighbor))
+
+        return distances[dest]
+
+    def get_min_distance(self, src, dest):
+        # Dijkstra's algorithm
+        distances = {vertex: float("inf") for vertex in self.vertices}
+        distances[src] = 0
+
+        pq = [(0, src)]
+        while pq:
+            current_dist, current_vertex = heapq.heappop(pq)
+
+            if current_dist > distances[current_vertex]:
+                continue
+
+            for neighbor, weight in self.vertices[current_vertex].neighbors.items():
+                new_dist = current_dist + weight
+
+                if new_dist < distances[neighbor]:
+                    distances[neighbor] = new_dist
+                    heapq.heappush(pq, (new_dist, neighbor))
+
+        return distances[dest]
+
+    def get_min_time(self, src, dest):
+        # Dijkstra's algorithm
+        distances = {vertex: float("inf") for vertex in self.vertices}
+        distances[src] = 0
+
+        pq = [(0, src)]
+        while pq:
+            current_dist, current_vertex = heapq.heappop(pq)
+
+            if current_dist > distances[current_vertex]:
+                continue
+
+            for neighbor, weight in self.vertices[current_vertex].neighbors.items():
+                new_dist = current_dist + 120 + 40 * weight  # Add transfer time
+                if new_dist < distances[neighbor]:
+                    distances[neighbor] = new_dist
+                    heapq.heappush(pq, (new_dist, neighbor))
+
+        return distances[dest]
+
+metro_map = Graph()
+min_heap = Heap()
+
+# Add vertices
+metro_map.add_vertex("Kacheguda")
+metro_map.add_vertex("Koti")
+metro_map.add_vertex("Ameerpet")
+metro_map.add_vertex("Begumpet")
+metro_map.add_vertex("Secunderabad")
+metro_map.add_vertex("Khairatabad")
+metro_map.add_vertex("Lakdikapul")
+metro_map.add_vertex("Nampally")
+metro_map.add_vertex("Malakpet")
+metro_map.add_vertex("Dilsukhnagar")
+metro_map.add_vertex("Kachiguda")
+metro_map.add_vertex("Jubilee Hills")
+metro_map.add_vertex("Madhapur")
+metro_map.add_vertex("Hi-Tech City")
+metro_map.add_vertex("Miyapur")
+metro_map.add_vertex("Nagole")
+
+# Add edges
+metro_map.add_edge("Kacheguda", "Koti", 1.5)
+metro_map.add_edge("Ameerpet", "Begumpet", 3)
+metro_map.add_edge("Begumpet", "Secunderabad", 5)
+metro_map.add_edge("Secunderabad", "Khairatabad", 6)
+metro_map.add_edge("Khairatabad", "Lakdikapul", 4)
+metro_map.add_edge("Lakdikapul", "Nampally", 2)
+metro_map.add_edge("Nampally", "Malakpet", 3)
+metro_map.add_edge("Malakpet", "Dilsukhnagar", 5)
+metro_map.add_edge("Dilsukhnagar", "Koti", 4)
+metro_map.add_edge("Koti", "Kachiguda", 2)
+metro_map.add_edge("Kachiguda", "Jubilee Hills", 7)
+metro_map.add_edge("Jubilee Hills", "Madhapur", 6)
+metro_map.add_edge("Madhapur", "Hi-Tech City", 5)
+metro_map.add_edge("Hi-Tech City", "Miyapur", 8)
+metro_map.add_edge("Miyapur", "Nagole", 10)
+
+
+print("** \t\t\tWelcome to Hyderabad Metro Information System \t\t\t**")
+print("------------------------------------------------------------------------")
+print("***************      Hyderabad Metro Map       ****************")
+
+metro_map.display_map()
+
+src = input("Enter source station: ")
+dest = input("Enter destination station: ")
+
+fare = metro_map.dijkstra(src, dest)
+min_dist = metro_map.get_min_distance(src, dest)
+min_time = metro_map.get_min_time(src, dest)
+
+print("Minimum fare is: ", fare)
+print("Shortest distance is: ", min_dist)
+print("Minimum time is (in seconds): ", min_time)
